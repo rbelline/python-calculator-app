@@ -1,7 +1,7 @@
 import tkinter as tk
 from components.display import create_display_labels
 from components.frames import create_display_frame, create_buttons_frame
-from components.buttons import create_digit_buttons, create_operator_button, create_special_buttons
+from components.buttons import create_digit_buttons, create_operator_button, create_special_buttons, bind_keys
 
 class Calculator:
     def __init__(self):
@@ -35,6 +35,7 @@ class Calculator:
         create_digit_buttons(self)
         create_operator_button(self)
         create_special_buttons(self)
+        bind_keys(self.window, self)
 
     def add_to_expression(self, value):
         self.current_expression += str(value)
@@ -44,10 +45,13 @@ class Calculator:
         self.window.mainloop()
 
     def update_total_label(self):
-        self.total_label.config(text=self.total_expression)
+        expression = self.total_expression
+        for operator, simbolo in self.operators.items():
+            expression = expression.replace(operator, f' {simbolo} ')
+        self.total_label.config(text=expression)
 
     def update_label(self):
-        self.label.config(text=self.current_expression)
+        self.label.config(text=self.current_expression[:11])
 
     def append_operator(self, operator):
         self.current_expression += operator
@@ -66,9 +70,29 @@ class Calculator:
         self.total_expression += self.current_expression
         self.update_total_label()
 
-        self.current_expression = str(eval(self.total_expression))
-        self.total_expression = ""
-        self.update_label()
+        try:
+            self.current_expression = str(eval(self.total_expression))
+            self.total_expression = ""
+        except Exception as e:
+            self.current_expression = "Error"
+        finally:
+            self.update_label()
+
+    def square(self):
+        try:
+            self.current_expression = str(eval(f"{self.current_expression}**2"))
+        except Exception as e:
+            self.current_expression = "Error"
+        finally:
+            self.update_label()
+
+    def sqrt(self):
+        try:
+            self.current_expression = str(eval(f"{self.current_expression}**0.5"))
+        except Exception as e:
+            self.current_expression = "Error"
+        finally:
+            self.update_label()
 
 if __name__ == "__main__":
     calc = Calculator()

@@ -18,13 +18,35 @@ def create_operator_button(calculator):
 def create_clear_button(calculator):
     button = tk.Button(calculator.buttons_frame, text="C", bg=OFF_WHITE, fg=LABEL_COLOR,
                            font=DEFAULT_FONT_STYLE, borderwidth=0, command= calculator.clear)
-    button.grid(row=0, column=1, columnspan=3, sticky=tk.NSEW)
+    button.grid(row=0, column=1, sticky=tk.NSEW)
+
+def create_square_button(calculator):
+    button = tk.Button(calculator.buttons_frame, text="x\u00b2", bg=OFF_WHITE, fg=LABEL_COLOR,
+                           font=DEFAULT_FONT_STYLE, borderwidth=0, command= calculator.square)
+    button.grid(row=0, column=2, sticky=tk.NSEW)
+
+def create_sqrt_button(calculator):
+    button = tk.Button(calculator.buttons_frame, text="\u221a", bg=OFF_WHITE, fg=LABEL_COLOR,
+                           font=DEFAULT_FONT_STYLE, borderwidth=0, command= calculator.sqrt)
+    button.grid(row=0, column=3, sticky=tk.NSEW)
 
 def create_equal_button(calculator):
     button = tk.Button(calculator.buttons_frame, text="=", bg=LIGHT_BLUE, fg=LABEL_COLOR,
                            font=DEFAULT_FONT_STYLE, borderwidth=0, command= calculator.evaluate)
     button.grid(row=4, column=3, columnspan=2, sticky=tk.NSEW)
 
+def bind_keys(window, calculator):
+    window.bind("<Return>", lambda event: calculator.evaluate())
+    window.bind("<Escape>", lambda event: calculator.clear())
+    window.bind("<Delete>", lambda event: calculator.clear())
+    for key in calculator.digits:
+        window.bind(str(key), lambda event, digit=key: calculator.add_to_expression(digit))
+
+    for key in calculator.operators:
+        window.bind(str(key), lambda event, operator=key: calculator.append_operator(operator))
+
 def create_special_buttons(calculator):
     create_clear_button(calculator)
     create_equal_button(calculator)
+    create_square_button(calculator)
+    create_sqrt_button(calculator)
